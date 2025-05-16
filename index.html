@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>台股豪韭-滿足點計算機</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .logos {
+            margin-top: 30px;
+        }
+        .logos img {
+            width: 60px;
+            margin: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .footer-note {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>台股豪韭-滿足點計算機</h1>
+        <img src="LOGO1.png" style="display:block; margin: 0 auto; width: 100px;">
+
+        <select id="mode">
+            <option value="bull_target">多方滿足區</option>
+            <option value="bull_retrace">多方回檔</option>
+            <option value="bear_target">空方滿足區</option>
+            <option value="bear_rebound">空方反彈滿足區</option>
+        </select>
+        <input type="number" id="highPoint" placeholder="請輸入高點">
+        <input type="number" id="lowPoint" placeholder="請輸入低點">
+        <button onclick="calculate()">計算</button>
+
+        <div id="result" class="result"></div>
+
+        <div class="logos">
+            <a href="https://www.instagram.com/stock_hao9/" target="_blank">
+                <img src="LOGO2.png" alt="Instagram">
+            </a>
+            <br />
+            <a href="https://lin.ee/zauoGGJ" target="_blank">
+                <img src="LOGO3.png" alt="LINE">
+            </a>
+        </div>
+
+        <div class="footer">當沖訊號、技術分析教學 請私訊</div>
+        <div class="footer-note">慢慢來比較快</div>
+    </div>
+
+    <script>
+        function roundPrice(price) {
+            if (price < 10) return price.toFixed(2);
+            if (price < 50) return (Math.round(price * 20) / 20).toFixed(2);
+            if (price < 100) return (Math.round(price * 10) / 10).toFixed(1);
+            if (price < 500) return (Math.round(price * 2) / 2).toFixed(1);
+            if (price < 1000) return Math.round(price).toString();
+            return (Math.round(price / 5) * 5).toString();
+        }
+
+        function calculate() {
+            const high = parseFloat(document.getElementById("highPoint").value);
+            const low = parseFloat(document.getElementById("lowPoint").value);
+            const mode = document.getElementById("mode").value;
+            const resultDiv = document.getElementById("result");
+
+            if (isNaN(high) || isNaN(low) || high <= low) {
+                resultDiv.innerHTML = "請輸入有效的高點與低點（高點應大於低點）";
+                return;
+            }
+
+            const diff = high - low;
+            let html = '<table><thead><tr><th>說明</th><th>價格</th></tr></thead><tbody>';
+
+            if (mode === 'bull_target') {
+                html += `<tr><td>0.786 (可能支撐)</td><td>${roundPrice(high - diff * 0.272)}</td></tr>`;
+                html += `<tr><td>1.13 (假突破注意區)</td><td>${roundPrice(high + diff * 0.13)}</td></tr>`;
+                html += `<tr><td>1.272 (假突破注意區)</td><td>${roundPrice(high + diff * 0.272)}</td></tr>`;
+                html += `<tr><td>1.5</td><td>${roundPrice(high + diff * 0.5)}</td></tr>`;
+                html += `<tr><td>1.618</td><td>${roundPrice(high + diff * 0.618)}</td></tr>`;
+                html += `<tr><td>1.786 (滿足區)</td><td>${roundPrice(high + diff * 0.786)}</td></tr>`;
+                html += `<tr><td>2 (滿足區)</td><td>${roundPrice(high + diff)}</td></tr>`;
+            } else if (mode === 'bull_retrace') {
+                html += `<tr><td>0.382 (守住強力攻擊)</td><td>${roundPrice(high - diff * 0.382)}</td></tr>`;
+                html += `<tr><td>0.5 (回來一半囉)</td><td>${roundPrice(high - diff * 0.5)}</td></tr>`;
+                html += `<tr><td>0.618 (可以密切注意)</td><td>${roundPrice(high - diff * 0.618)}</td></tr>`;
+                html += `<tr><td>0.705~0.786 (收針在注意)</td><td>${roundPrice(high - diff * 0.705)} ~ ${roundPrice(high - diff * 0.786)}</td></tr>`;
+            } else if (mode === 'bear_target') {
+                html += `<tr><td>0.786 (可能支撐)</td><td>${roundPrice(low + diff * 0.272)}</td></tr>`;
+                html += `<tr><td>1.13 (假跌破注意區)</td><td>${roundPrice(low - diff * 0.13)}</td></tr>`;
+                html += `<tr><td>1.272 (假跌破注意區)</td><td>${roundPrice(low - diff * 0.272)}</td></tr>`;
+                html += `<tr><td>1.5 (跌一半囉)</td><td>${roundPrice(low - diff * 0.5)}</td></tr>`;
+                html += `<tr><td>1.618</td><td>${roundPrice(low - diff * 0.618)}</td></tr>`;
+                html += `<tr><td>1.786 (滿足區)</td><td>${roundPrice(low - diff * 0.786)}</td></tr>`;
+                html += `<tr><td>2 (滿足區)</td><td>${roundPrice(low - diff)}</td></tr>`;
+            } else if (mode === 'bear_rebound') {
+                html += `<tr><td>0.236 (突破可能反彈開始)</td><td>${roundPrice(low + diff * 0.236)}</td></tr>`;
+                html += `<tr><td>0.386 (反彈第一關)</td><td>${roundPrice(low + diff * 0.386)}</td></tr>`;
+                html += `<tr><td>0.5 (反彈第二關)</td><td>${roundPrice(low + diff * 0.5)}</td></tr>`;
+                html += `<tr><td>0.618 (反彈第三關)</td><td>${roundPrice(low + diff * 0.618)}</td></tr>`;
+                html += `<tr><td>0.705~0.786 (密切注意)</td><td>${roundPrice(low + diff * 0.705)} ~ ${roundPrice(low + diff * 0.786)}</td></tr>`;
+            }
+
+            html += '</tbody></table>';
+            resultDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
